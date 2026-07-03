@@ -1,15 +1,35 @@
+import { authenticate } from "../shopify.server";
 import { useEffect, useState } from "react"
+import { useLoaderData } from "react-router";
 
 
 
+export async function loader({request}) {
+ const {admin , session} = await authenticate.admin(request);
+
+ const shop = session.shop;
+
+ return shop
+}
+
+const  EXTENSION_UUID  = "13337e01cfaa4f7d38c6327cf72fceef";
+
+const BLOCK_HANDLE  = "app_embed";
 
 
 export default function Index() {
   const [checkedPage, setCheckedPage] = useState("product-page");
-  useEffect(() => {
-   console.log(checkedPage)
-  }, [checkedPage])
+  const shop = useLoaderData();
+
+
   
+  const handleEnableAppEmbed = () => {
+    console.log("Enable app embed");
+
+    const deepLink = `https://${shop}/admin/themes/current/editor?context=apps&template=product&activateAppId=${EXTENSION_UUID}/${BLOCK_HANDLE}`;
+
+    open(deepLink, "_blank");
+  }
 return(
   <>
   <s-page>
@@ -19,7 +39,7 @@ return(
       <s-stack gap="base">
       <s-stack direction="inline" gap="base"><s-heading>Activate App</s-heading><s-badge tone="success" >Published</s-badge></s-stack>
       <s-text>Enable the app embed in your published theme to display interactive variant swatches on your storefront.</s-text>
-      <s-button  variant="primary">Enable app embed</s-button>
+      <s-button  variant="primary" onClick={handleEnableAppEmbed}>Enable app embed</s-button>
       </s-stack>
   
     </s-section>

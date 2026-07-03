@@ -1,0 +1,15 @@
+{% if product %}
+  <div class="dummy-product-note" {{ block.shopify_attributes }}>
+    <p>🔥 Hot pick! {{ product.title }} is trending right now.</p>
+  </div>
+{% endif %}
+
+<script src="{{ 'app-embed.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "App Embed",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}
