@@ -2,6 +2,10 @@
 
 
 
+const hideElement = (el)=>{
+  el.style.cssText =     `position: absolute;     width: 1px;     height: 1px;     overflow: hidden;     opacity: 0;     pointer-events: none;     clip: rect(0,0,0,0);`  ;
+  el.setAttribute('aria-hidden', 'true');
+}
 
 
 
@@ -82,10 +86,6 @@ if (wrapper && productForm) {
   }
 
 
-  const hideElement = (el)=>{
-    el.style.cssText =     `position: absolute;     width: 1px;     height: 1px;     overflow: hidden;     opacity: 0;     pointer-events: none;     clip: rect(0,0,0,0);`  ;
-    el.setAttribute('aria-hidden', 'true');
-  }
 
 
 
@@ -94,9 +94,16 @@ const initSwatches = () => {
 
     const result = findInjecttionPoint();
 
+    if (!result) {
+      document.documentElement.classList.remove('sq-hide-native');
+      return;
+    }
+
     const swatchesContainer = document.createElement('div');
     swatchesContainer.className = "sq-swatches-container";
-    swatchesContainer.textContent = "custom swatches container";
+    const h1 = document.createElement("h1");
+    h1.innerHTML = "cusotm swatch"
+    swatchesContainer.appendChild(h1);
 
 
 // ------------------------------------------------------------------
@@ -116,7 +123,7 @@ const initSwatches = () => {
 // ------------------------------------------------------------------
     } else if(result.case === "wrapper-only" ){
       hideElement(result.wrapper);
-result.wrapper.insertAdjacentElement('afterend', mainContainer);
+result.wrapper.insertAdjacentElement('afterend', swatchesContainer);
 
 
 
@@ -136,7 +143,7 @@ result.wrapper.insertAdjacentElement('afterend', mainContainer);
       }
       
       allSelects.forEach(select => hideElement(select));
-      allSelects[0].insertAdjacentElement('afterend', mainContainer);
+      allSelects[0].insertAdjacentElement('afterend', swatchesContainer);
  
       
       
@@ -145,8 +152,8 @@ result.wrapper.insertAdjacentElement('afterend', mainContainer);
 
       // If every option row was skipped (all disabled, all hidden OOS, etc.)
 // remove the empty container so it leaves no trace in the DOM
-      if (mainContainer.children.length === 0) {
-        mainContainer.remove();
+      if (swatchesContainer.children.length === 0) {
+        swatchesContainer.remove();
         console.warn('SwatchQueen PDP: No swatch rows were rendered — container removed');
         return;
         }

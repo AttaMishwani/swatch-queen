@@ -4,6 +4,36 @@
   </div>
 {% endif %}
 
+<style>
+  /* Wrapper-level selectors (Case 1 & 2) */
+  .sq-hide-native variant-radios,
+  .sq-hide-native variant-picker,
+  .sq-hide-native .variant-picker,
+  .sq-hide-native variant-selects,
+  .sq-hide-native .product-form__variants,
+  .sq-hide-native .product__variants,
+  .sq-hide-native [data-variant-picker],
+
+  /* Form-level selectors — sirf variant inputs, poora form nahi (Case 3) */
+  .sq-hide-native form[action="/cart/add"] select[name^="options["],
+  .sq-hide-native form[action="/cart/add"] fieldset[name^="Color"],
+  .sq-hide-native form[action="/cart/add"] fieldset[name^="Size"],
+  .sq-hide-native .product-form select[name^="options["],
+  .sq-hide-native .product-form fieldset,
+  .sq-hide-native [data-product-form] select[name^="options["],
+  .sq-hide-native [data-product-form] fieldset,
+  .sq-hide-native form.variant-picker__form select[name^="options["],
+  .sq-hide-native form.variant-picker__form fieldset,
+  .sq-hide-native .product__form select[name^="options["],
+  .sq-hide-native .product__form fieldset {
+    visibility: hidden !important;
+  }
+</style>
+
+<script>
+  document.documentElement.classList.add('sq-hide-native');
+</script>
+
 <script src="{{ 'app-embed.js' | asset_url }}" defer></script>
 
 {% schema %}
