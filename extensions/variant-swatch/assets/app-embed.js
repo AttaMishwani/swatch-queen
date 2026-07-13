@@ -86,13 +86,31 @@ if (wrapper && productForm) {
   }
 
 
+  const getSwatchStyle = async()=>{
+
+    try {
+      const shopDomain = window.Shopify?.shop;
+console.log(shopDomain , "found on frontend")
+      if(!shopDomain){
+       return console.log("SwatchQueen PDP: window.Shopify.shop not found")
+      }
+      const res = await fetch(`/apps/public?shop=${shopDomain}`);
+
+  const json = await res.json();
+  console.log(json)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
 
-const initSwatches = () => {
+const initSwatches = async() => {
     console.log('initSwatches function running');
 
     const result = findInjecttionPoint();
+    const pdpSwatchStyle = await getSwatchStyle();
 
     if (!result) {
       document.documentElement.classList.remove('sq-hide-native');

@@ -5,30 +5,97 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
-// enough when changing adapters.
-// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
+// --- Shopify session storage ---
+// id is kept as a plain string (not ObjectId) because the Shopify Prisma
+// session storage adapter uses its own generated session id
+// (e.g. "offline_shop.myshopify.com") as the primary key directly.
 model Session {
-  id            String    @id
-  shop          String
-  state         String
-  isOnline      Boolean   @default(false)
-  scope         String?
-  expires       DateTime?
-  accessToken   String
-  userId        BigInt?
-  firstName     String?
-  lastName      String?
-  email         String?
-  accountOwner  Boolean   @default(false)
-  locale        String?
-  collaborator  Boolean?  @default(false)
-  emailVerified Boolean?  @default(false)
+  db_id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                  String    @unique
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
   refreshToken        String?
   refreshTokenExpires DateTime?
+}
+
+// --- Swatch Queen app models ---
+
+model Shop {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopDomain            String   @unique
+  isActive              Boolean  @default(true)
+  pdpEmbedEnabled       Boolean  @default(false)
+  plan                  String?
+  installedAt           DateTime @default(now())
+  storefrontAccessToken String?
+}
+
+model ProductPageSettings {
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  shopDomain          String  @unique
+  isEnabled           Boolean @default(false)
+  colorSwatchEnabled  Boolean @default(false)
+  sizeSwatchEnabled   Boolean @default(false)
+  colorSwatchType     String?
+  sizeSwatchType      String?
+  outOfStockBehavior  String?
+  activeColorPresetId String? @db.ObjectId
+  activeSizePresetId  String? @db.ObjectId
+}
+
+model CollectionPageSettings {
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  shopDomain          String  @unique
+  isEnabled           Boolean @default(false)
+  colorSwatchEnabled  Boolean @default(false)
+  sizeSwatchEnabled   Boolean @default(false)
+  outOfStockBehavior  String?
+  maxSwatchesPerCard  Int?
+  showOverflowCount   Boolean @default(true)
+  hoverBehavior       String?
+  swatchClickBehavior String?
+  activeColorPresetId String? @db.ObjectId
+  activeSizePresetId  String? @db.ObjectId
+}
+
+model StylePreset {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopDomain        String
+  pageType          String   // "product" | "collection"
+  optionType        String   // "color" | "size"
+  name              String
+  isActive          Boolean  @default(false)
+  displayType       String?
+  shape             String?
+  activeStyle       Json?
+  inactiveStyle     Json?
+  outOfStockDisplay String?
+  createdAt         DateTime @default(now())
+
+  @@index([shopDomain, pageType, optionType])
+}
+
+model AppSettings {
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  shopDomain       String  @unique
+  saleBadgeText    String?
+  soldOutBadgeText String?
+  pageSettings     Json?
 }

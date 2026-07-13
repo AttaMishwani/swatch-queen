@@ -49,3 +49,9 @@ redirect_urls = [ "https://example.com/api/auth" ]
 
 [build]
 automatically_update_urls_on_dev = true
+
+
+[app_proxy]
+url = "https://example.com/api/pdp-config"
+prefix = "apps"
+subpath = "public"
